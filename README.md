@@ -8,4 +8,6 @@
 **the reason i made this is because i wanted to specify how many clicks per second i want and not just the delay like some other autoclickers.**
 
 ![](Images/Syphon_AutoClicker_2.png)
+###
+
 ![](Images/Syphon_AutoClicker.png)
