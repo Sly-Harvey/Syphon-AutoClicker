@@ -1,6 +1,6 @@
 # Syphon-AutoClicker-V2
 
-this is my first proper project.
+this is my first C++ project.
 
 this autoclicker can go up to 5000 clicks per second.
 it doesn't support custom hotkeys but i might add them in the future.
