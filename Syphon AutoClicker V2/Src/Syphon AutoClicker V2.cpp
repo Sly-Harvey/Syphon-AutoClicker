@@ -1,18 +1,35 @@
 #include <iostream>
-#include <Windows.h>
 #include <string>
+#include <vector>
+#include <Windows.h>
 #include "boost/lexical_cast.hpp"
 
-INPUT mouseInput[2]; // do NOT put this is main function because your pc will crash and you will have a black screen.
+INPUT mouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
+
+bool windowShown = true;
+HWND consoleWindow = GetConsoleWindow();
+
+bool toggle = false;
+std::string toggleDisplay = "False";
+
+bool userError = false;
+const int timeResolution = 3;
+
+const int maxCps = 5000;
+int cps = 0;
+std::string cpsString;
+
+const int darkRed = 4;
+const int lightRed = 12;
 
 void menu(int cps, int maxCps, std::string toggleDisplay)
 {
     system("cls");
     std::cout << "Clicking: " << toggleDisplay << std::endl;
     std::cout << "" << std::endl;
-    std::cout << "Current cps is: " << cps << std::endl;
+    std::cout << "Current cps: " << cps << std::endl;
     std::cout << "" << std::endl;
-    std::cout << "Max cps is: " << maxCps << std::endl;
+    std::cout << "Max cps: " << maxCps << std::endl;
     std::cout << "" << std::endl;
     std::cout << "Press Mouse Button 5 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
@@ -26,26 +43,9 @@ void menu(int cps, int maxCps, std::string toggleDisplay)
 int main()
 {
     SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
-
-    bool windowShown = true;
-    HWND consoleWindow = GetConsoleWindow();
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 0, 0, 47, 17, SWP_DRAWFRAME | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-    ShowWindow(consoleWindow, SW_NORMAL);
-
-    bool toggle = false;
-    std::string toggleDisplay = "False";
-
-    bool userError = false;
-    const int timeResolution = 3;
-
-    const int maxCps = 5000;
-    int cps = 0;
-    std::string cpsString;
-
-    const int darkRed = 4;
-    const int lightRed = 12;
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, lightRed);
+    SetConsoleTitleA("Syphon AutoClicker V2");
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), lightRed);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 410, 300, SWP_SHOWWINDOW);
 
     mouseInput->type = INPUT_MOUSE;
 
@@ -86,7 +86,7 @@ int main()
             windowShown = !windowShown;
             if (windowShown)
             {
-                ShowWindow(consoleWindow, SW_NORMAL);
+                ShowWindow(consoleWindow, SW_SHOWNORMAL);
             }
             if (!windowShown)
             {
@@ -102,7 +102,7 @@ int main()
             cps = 0;
 
             system("cls");
-            std::cout << "Error: Only whole numbers less than " << maxCps << " are allowed." << std::endl;
+            std::cout << "Only whole numbers less than " << maxCps << " are allowed." << std::endl;
             std::cout << "Please try again." << std::endl;
             std::cout << "" << std::endl;
             std::cout << "Enter desired cps: ";
@@ -139,6 +139,7 @@ int main()
         {
             if (GetAsyncKeyState(VK_HOME) & 1)
             {
+                SetForegroundWindow(consoleWindow);
                 system("cls");
                 std::cout << "Enter desired cps: ";
                 std::cin >> cpsString;
