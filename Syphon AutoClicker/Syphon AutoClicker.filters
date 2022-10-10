@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Syphon AutoClicker V2.cpp">
+    <ClCompile Include="Src\Syphon AutoClicker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

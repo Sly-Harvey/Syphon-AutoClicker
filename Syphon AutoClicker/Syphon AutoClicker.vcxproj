@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{ee2d555a-9d3e-4dd5-95fd-9173668197eb}</ProjectGuid>
-    <RootNamespace>SyphonAutoClickerV2</RootNamespace>
+    <RootNamespace>SyphonAutoClicker</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Syphon AutoClicker</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -159,13 +160,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Syphon AutoClicker V2.cpp" />
+    <ClCompile Include="Src\Syphon AutoClicker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Syphon AutoClicker V2.rc" />
+    <ResourceCompile Include="Syphon AutoClicker.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\..\Pictures\Icons\AutoClicker_default.ico" />
