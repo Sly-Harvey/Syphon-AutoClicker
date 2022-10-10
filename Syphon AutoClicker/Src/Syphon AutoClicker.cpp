@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <chrono>
 #include <thread>
 #include <future>
@@ -9,15 +8,10 @@
 
 INPUT mouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
 
-std::future<void> inputsFuture;
-
-#if PR_DEBUG == 1
-std::thread::id mainID;
-std::thread::id inputHandling_ID;
-#endif
-
 bool windowShown = true;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 HWND consoleWindow = GetConsoleWindow();
+CONSOLE_SCREEN_BUFFER_INFO endConsoleCurserPos;
 
 bool toggle = false;
 std::string toggleDisplay = "False";
@@ -31,22 +25,32 @@ const int maxCps = 5000;
 int cps = 0;
 std::string cpsString;
 
-static std::mutex dataLock;
-
 const int darkRed = 4;
 const int lightRed = 12;
 
+void ChangeCurserPos(int x, int y)
+{
+    COORD newCurserPos = { x, y };
+    SetConsoleCursorPosition(hConsole, newCurserPos);
+}
+
+void ShowConsoleCursor(bool showFlag)
+{
+    CONSOLE_CURSOR_INFO cursorInfo;
+
+    GetConsoleCursorInfo(hConsole, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(hConsole, &cursorInfo);
+}
+
 void menu(int cps, int maxCps, std::string toggleDisplay)
 {
+    ShowConsoleCursor(false);
     system("cls");
 #if PR_DEBUG == 1
     std::cout << " [DEBUG MODE]" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " [DEBUG]Time Resolution: " << timeResolution << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << " [DEBUG]Main Thread id: " << mainID << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << " [DEBUG]InputHandling Thread id: " << inputHandling_ID << std::endl;
     std::cout << "" << std::endl;
 #endif
     std::cout << " Clicking: " << toggleDisplay << std::endl;
@@ -76,7 +80,6 @@ void inputHandling()
 
         if (GetAsyncKeyState(VK_DELETE) & 1)
         {
-            std::lock_guard<std::mutex> lock(dataLock);
             windowShown = !windowShown;
             if (windowShown)
             {
@@ -90,10 +93,10 @@ void inputHandling()
 
         while (userError || cps > maxCps)
         {
-            std::lock_guard<std::mutex> lock(dataLock);
             userError = false;
             toggle = false;
             toggleDisplay = "False";
+            ShowConsoleCursor(true);
             cps = 0;
 
             system("cls");
@@ -115,7 +118,6 @@ void inputHandling()
 
         if (GetAsyncKeyState(VK_XBUTTON2) & 1)
         {
-            std::lock_guard<std::mutex> lock(dataLock);
             toggle = !toggle;
             if (toggle)
             {
@@ -128,14 +130,20 @@ void inputHandling()
 
             toggleDisplay = toggle ? "True" : "False";
 
-            menu(cps, maxCps, toggleDisplay);
+#if PR_DEBUG == 1
+            ChangeCurserPos(11, 4);
+#elif defined(PR_RELEASE)
+            ChangeCurserPos(11, 0);
+#endif
+            std::cout << toggleDisplay << " " << std::endl;
+            SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
         }
 
         if (windowShown)
         {
             if (GetAsyncKeyState(VK_HOME) & 1)
             {
-                std::lock_guard<std::mutex> lock(dataLock);
+                ShowConsoleCursor(true);
                 SetForegroundWindow(consoleWindow);
                 system("cls");
                 std::cout << " Enter desired cps: ";
@@ -143,7 +151,7 @@ void inputHandling()
                 try
                 {
                     cps = boost::lexical_cast<int>(cpsString);
-                    //uncomment the 2 lines below for auto minimize after changing cps
+                    //the 2 lines below are for auto minimize after changing cps
 
                     //ShowWindow(consoleWindow, SW_MINIMIZE);
                     //windowShown = !windowShown;
@@ -162,13 +170,13 @@ void inputHandling()
 int main()
 {
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 380, 400, SWP_SHOWWINDOW);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 330, SWP_SHOWWINDOW);
 #elif defined(PR_RELEASE)
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 380, 280, SWP_SHOWWINDOW);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 270, SWP_SHOWWINDOW);
 #endif
-    SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
+    SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+    SetConsoleTextAttribute(hConsole, lightRed);
     SetConsoleTitleA("Syphon AutoClicker");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), lightRed);
 
     mouseInput->type = INPUT_MOUSE;
 
@@ -194,24 +202,21 @@ int main()
         timeResolution = timeCap.wPeriodMin;
     }
 
-    //inputsFuture = std::async(std::launch::async, inputHandling);
-    std::thread inputHandling_Thread(inputHandling);
-#if PR_DEBUG == 1
-    mainID = std::this_thread::get_id();
-    inputHandling_ID = inputHandling_Thread.get_id();
-#endif
-
     try
     {
         std::cout << " Enter desired cps: ";
         std::cin >> cpsString;
         cps = boost::lexical_cast<int>(cpsString);
         menu(cps, maxCps, toggleDisplay);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
     }
     catch (boost::bad_lexical_cast e)
     {
         userError = true;
     }
+
+    std::thread inputHandling_Thread(inputHandling);
 
     while (true)
     {
