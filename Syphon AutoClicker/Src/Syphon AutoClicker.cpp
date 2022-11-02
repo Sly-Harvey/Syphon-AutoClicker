@@ -24,6 +24,7 @@ std::string toggleDisplay = "False";
 std::vector<POINT> cursorPositions;
 int loopsPerSecond = 0;
 int clickHoldTime = 7;
+bool rememberMultiSettings = false;
 std::string loopsPerSecondString;
 std::string clickHoldTimeString;
 
@@ -33,7 +34,7 @@ bool multiUserError = false;
 int timeResolution = 3;
 TIMECAPS timeCap;
 
-const int maxCps = 5000;
+int maxCps = 5000;
 int cps = 0;
 std::string cpsString;
 
@@ -55,7 +56,7 @@ void ShowConsoleCursor(bool showFlag)
     SetConsoleCursorInfo(hConsole, &cursorInfo);
 }
 
-void menu(int cps, int maxCps, std::string toggleDisplay)
+void menu(int& cps, int& maxCps, std::string& toggleDisplay)
 {
     ShowConsoleCursor(false);
     system("cls");
@@ -84,7 +85,7 @@ void menu(int cps, int maxCps, std::string toggleDisplay)
     GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
 }
 
-void mutiTargetmenu(int cps, int maxCps, std::string toggleDisplay)
+void mutiTargetmenu(std::string& toggleDisplay)
 {
     ShowConsoleCursor(false);
     system("cls");
@@ -154,19 +155,18 @@ void inputHandling()
             toggleDisplay = "False";
             ShowConsoleCursor(true);
 
-            if (multiTargetMode == false)
+            if (multiTargetMode == false && rememberMultiSettings == false)
             {
                 multiToggle = false;
                 multiTargetMode = true;
+                rememberMultiSettings = true;
                 SetConsoleTextAttribute(hConsole, darkRed);
 
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_SHOWWINDOW);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_SHOWWINDOW);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
 #endif
-
-                //start test
                 system("cls");
                 std::cout << " Enter desired loops per second: ";
                 std::cin >> loopsPerSecondString;
@@ -192,20 +192,36 @@ void inputHandling()
                 }
 
                 if (multiTargetMode == true)
-                    mutiTargetmenu(cps, maxCps, toggleDisplay);
+                    mutiTargetmenu(toggleDisplay);
                 else
                     menu(cps, maxCps, toggleDisplay);
-                //end test
 
                 //mutiTargetmenu(cps, maxCps, toggleDisplay);
             }
-            else
+            else if (multiTargetMode == false && rememberMultiSettings == true)
             {
                 multiToggle = false;
+                multiTargetMode = true;
+                SetConsoleTextAttribute(hConsole, darkRed);
+
+#if PR_DEBUG == 1
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
+#elif defined(PR_RELEASE)
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
+#endif
+
+                mutiTargetmenu(toggleDisplay);
+            }
+            else if (multiTargetMode == true)
+            {
+                userError = false;
+                toggle = false;
+                toggleDisplay = "False";
+                multiToggle = false;
                 multiTargetMode = false;
-                ZeroMemory(mouseInput, sizeof(INPUT));
+                //ZeroMemory(mouseInput, sizeof(INPUT));
                 SetConsoleTextAttribute(hConsole, lightRed);
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_SHOWWINDOW);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
                 menu(cps, maxCps, toggleDisplay);
             }
         }
@@ -303,7 +319,7 @@ void inputHandling()
                 userError = true;
             }
             if (multiTargetMode == true)
-                mutiTargetmenu(cps, maxCps, toggleDisplay);
+                mutiTargetmenu(toggleDisplay);
             else
                 menu(cps, maxCps, toggleDisplay);
         }
@@ -351,7 +367,7 @@ void inputHandling()
             }
 
             if (multiTargetMode == true)
-                mutiTargetmenu(cps, maxCps, toggleDisplay);
+                mutiTargetmenu(toggleDisplay);
             else
                 menu(cps, maxCps, toggleDisplay);
         }
@@ -411,7 +427,7 @@ void inputHandling()
                         userError = true;
                     }
                     if (multiTargetMode == true)
-                        mutiTargetmenu(cps, maxCps, toggleDisplay);
+                        mutiTargetmenu(toggleDisplay);
                     else
                         menu(cps, maxCps, toggleDisplay);
                 }
@@ -455,7 +471,7 @@ void inputHandling()
                     std::cout.flush();
 
                     if (multiTargetMode == true)
-                        mutiTargetmenu(cps, maxCps, toggleDisplay);
+                        mutiTargetmenu(toggleDisplay);
                     else
                         menu(cps, maxCps, toggleDisplay);
                 }
@@ -506,7 +522,7 @@ int main()
         std::cin >> cpsString;
         cps = boost::lexical_cast<int>(cpsString);
         if (multiTargetMode == true)
-            mutiTargetmenu(cps, maxCps, toggleDisplay);
+            mutiTargetmenu(toggleDisplay);
         else
             menu(cps, maxCps, toggleDisplay);
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
