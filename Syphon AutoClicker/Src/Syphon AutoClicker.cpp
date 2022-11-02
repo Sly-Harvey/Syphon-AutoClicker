@@ -58,6 +58,7 @@ void ShowConsoleCursor(bool showFlag)
 void menu(int& cps, int& maxCps, std::string& toggleDisplay)
 {
     ShowConsoleCursor(false);
+    std::cout << std::flush;
     system("cls");
 #if PR_DEBUG == 1
     std::cout << " [DEBUG MODE]" << std::endl;
@@ -128,11 +129,11 @@ void inputHandling()
     while (true)
     {
 
-        if (GetAsyncKeyState(VK_PAUSE) & 1)
-        {
-            cursorPositions.clear();
-            exit(0);
-        }
+        //if (GetAsyncKeyState(VK_PAUSE) & 1)
+        //{
+        //    cursorPositions.clear();
+        //    exit(0);
+        //}
 
         if (GetAsyncKeyState(VK_DELETE) & 1)
         {
@@ -153,7 +154,6 @@ void inputHandling()
             toggle = false;
             toggleDisplay = "False";
             ShowConsoleCursor(true);
-            SetForegroundWindow(consoleWindow);
 
             if (multiTargetMode == false && rememberMultiSettings == false)
             {
@@ -491,6 +491,12 @@ int main()
 
     while (true)
     {
+        if (GetAsyncKeyState(VK_PAUSE) & 1)
+        {
+            cursorPositions.clear();
+            exit(0);
+        }
+
         if (toggle)
         {
             SendInput(2, mouseInput, sizeof(INPUT));
