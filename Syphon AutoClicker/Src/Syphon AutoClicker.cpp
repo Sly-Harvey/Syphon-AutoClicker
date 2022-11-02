@@ -104,8 +104,6 @@ void mutiTargetmenu(int cps, int maxCps, std::string toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Click hold time in milliseconds: " << clickHoldTime << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Maximum allowed Speed: " << maxCps << std::endl;
-    std::cout << "" << std::endl;
     std::cout << " Press F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Press F7 to delete all positions" << std::endl;
@@ -161,7 +159,12 @@ void inputHandling()
                 multiToggle = false;
                 multiTargetMode = true;
                 SetConsoleTextAttribute(hConsole, darkRed);
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 500, SWP_SHOWWINDOW);
+
+#if PR_DEBUG == 1
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_SHOWWINDOW);
+#elif defined(PR_RELEASE)
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_SHOWWINDOW);
+#endif
 
                 //start test
                 system("cls");
@@ -465,7 +468,7 @@ void inputHandling()
 int main()
 {
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 330, SWP_SHOWWINDOW);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_SHOWWINDOW);
 #elif defined(PR_RELEASE)
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_SHOWWINDOW);
 #endif
