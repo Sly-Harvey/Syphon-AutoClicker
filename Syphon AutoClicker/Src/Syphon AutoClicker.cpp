@@ -8,7 +8,7 @@
 #include "boost/lexical_cast.hpp"
 
 INPUT mouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
-INPUT multiMouseInput; // do not put this is main function because your pc will crash and you will have a black screen.
+INPUT multiMouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
 
 bool windowShown = true;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -22,11 +22,10 @@ bool toggle = false;
 std::string toggleDisplay = "False";
 
 std::vector<POINT> cursorPositions;
-int loopsPerSecond = 0;
-int clickHoldTime = 7;
+int multiClicksPerSecond = 0;
+int maxMultiClicksPerSecond = 1000;
 bool rememberMultiSettings = false;
-std::string loopsPerSecondString;
-std::string clickHoldTimeString;
+std::string multiClicksPerSecondString;
 
 bool userError = false;
 bool multiUserError = false;
@@ -101,9 +100,9 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Positions: " << cursorPositions.size() << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Loops per second: " << loopsPerSecond << std::endl;
+    std::cout << " Clicks per second: " << multiClicksPerSecond << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Click hold time in milliseconds: " << clickHoldTime << std::endl;
+    std::cout << " Max Clicks per second: " << maxMultiClicksPerSecond << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Press F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
@@ -154,6 +153,7 @@ void inputHandling()
             toggle = false;
             toggleDisplay = "False";
             ShowConsoleCursor(true);
+            SetForegroundWindow(consoleWindow);
 
             if (multiTargetMode == false && rememberMultiSettings == false)
             {
@@ -168,35 +168,18 @@ void inputHandling()
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
 #endif
                 system("cls");
-                std::cout << " Enter desired loops per second: ";
-                std::cin >> loopsPerSecondString;
+                std::cout << " Enter desired clicks per second: ";
+                std::cin >> multiClicksPerSecondString;
                 try
                 {
-                    loopsPerSecond = boost::lexical_cast<int>(loopsPerSecondString);
+                    multiClicksPerSecond = boost::lexical_cast<int>(multiClicksPerSecondString);
                 }
                 catch (boost::bad_lexical_cast e)
                 {
                     multiUserError = true;
                 }
 
-                std::cout << "";
-                std::cout << " Enter desired click hold time: ";
-                std::cin >> clickHoldTimeString;
-                try
-                {
-                    clickHoldTime = boost::lexical_cast<int>(clickHoldTimeString);
-                }
-                catch (boost::bad_lexical_cast e)
-                {
-                    multiUserError = true;
-                }
-
-                if (multiTargetMode == true)
-                    mutiTargetmenu(toggleDisplay);
-                else
-                    menu(cps, maxCps, toggleDisplay);
-
-                //mutiTargetmenu(cps, maxCps, toggleDisplay);
+                mutiTargetmenu(toggleDisplay);
             }
             else if (multiTargetMode == false && rememberMultiSettings == true)
             {
@@ -324,42 +307,27 @@ void inputHandling()
                 menu(cps, maxCps, toggleDisplay);
         }
 
-        while (multiUserError || loopsPerSecond > 1000 || clickHoldTime <= 0)
+        while (multiUserError || multiClicksPerSecond > maxMultiClicksPerSecond)
         {
             multiUserError = false;
             userError = false;
             multiToggle = false;
+            multiClicksPerSecond = 0;
             toggleDisplay = "False";
             ShowConsoleCursor(true);
-            clickHoldTime = 7;
-            loopsPerSecond = 20;
 
             system("cls");
             std::cout << " Only whole numbers are allowed" << std::endl;
             std::cout << "";
-            std::cout << " Max loops per second is 1000" << std::endl;
-            std::cout << "";
-            std::cout << " The click hold time needs to be greater than 0" << std::endl;
+            std::cout << " Max multi clicks per second is " << maxMultiClicksPerSecond << std::endl;
             std::cout << "";
             std::cout << " Please try again." << std::endl;
             std::cout << "" << std::endl;
-            std::cout << " Enter desired loops per second: ";
-            std::cin >> loopsPerSecondString;
+            std::cout << " Enter desired clicks per second: ";
+            std::cin >> multiClicksPerSecondString;
             try
             {
-                loopsPerSecond = boost::lexical_cast<int>(loopsPerSecondString);
-            }
-            catch (boost::bad_lexical_cast e)
-            {
-                multiUserError = true;
-            }
-
-            std::cout << "";
-            std::cout << " Enter desired click hold time: ";
-            std::cin >> clickHoldTimeString;
-            try
-            {
-                clickHoldTime = boost::lexical_cast<int>(clickHoldTimeString);
+                multiClicksPerSecond = boost::lexical_cast<int>(multiClicksPerSecondString);
             }
             catch (boost::bad_lexical_cast e)
             {
@@ -409,6 +377,7 @@ void inputHandling()
                     multiToggle = false;
                     toggleDisplay = "False";
 
+                    std::cout << std::flush;
                     ShowConsoleCursor(true);
                     SetForegroundWindow(consoleWindow);
                     system("cls");
@@ -442,26 +411,15 @@ void inputHandling()
                     multiToggle = false;
                     toggleDisplay = "False";
 
+                    std::cout << std::flush;
                     ShowConsoleCursor(true);
                     SetForegroundWindow(consoleWindow);
                     system("cls");
-                    std::cout << " Enter desired loops per second: ";
-                    std::cin >> loopsPerSecondString;
+                    std::cout << " Enter desired clicks per second: ";
+                    std::cin >> multiClicksPerSecondString;
                     try
                     {
-                        loopsPerSecond = boost::lexical_cast<int>(loopsPerSecondString);
-                    }
-                    catch (boost::bad_lexical_cast e)
-                    {
-                        multiUserError = true;
-                    }
-
-                    std::cout << "";
-                    std::cout << " Enter desired click hold time: ";
-                    std::cin >> clickHoldTimeString;
-                    try
-                    {
-                        clickHoldTime = boost::lexical_cast<int>(clickHoldTimeString);
+                        multiClicksPerSecond = boost::lexical_cast<int>(multiClicksPerSecondString);
                     }
                     catch (boost::bad_lexical_cast e)
                     {
@@ -470,10 +428,7 @@ void inputHandling()
 
                     std::cout.flush();
 
-                    if (multiTargetMode == true)
-                        mutiTargetmenu(toggleDisplay);
-                    else
-                        menu(cps, maxCps, toggleDisplay);
+                    mutiTargetmenu(toggleDisplay);
                 }
             }
         }
@@ -539,33 +494,24 @@ int main()
         if (toggle)
         {
             SendInput(2, mouseInput, sizeof(INPUT));
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / (cps + 1)));
+            std::this_thread::sleep_for(std::chrono::milliseconds(905 / cps));
         }
         else if (multiToggle)
         {
-            for(int i = 0; i < cursorPositions.size(); i++)
+            for(POINT i : cursorPositions)
             {
-                SetCursorPos(cursorPositions[i].x, cursorPositions[i].y);
-                mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-                std::this_thread::sleep_for(std::chrono::milliseconds(clickHoldTime));
-                mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-
-                //SetCursorPos(cursorPositions[i].x, cursorPositions[i].y);
-                //
-                //multiMouseInput.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-                //multiMouseInput.mi.dx = cursorPositions[i].x;
-                //multiMouseInput.mi.dy = cursorPositions[i].y;
-                //
-                //SendInput(1, &multiMouseInput, sizeof(INPUT));
-                //
-                //multiMouseInput.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-                //multiMouseInput.mi.dx = cursorPositions[i].x;
-                //multiMouseInput.mi.dy = cursorPositions[i].y;
-                //
-                //SendInput(1, &multiMouseInput, sizeof(INPUT));
-                //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                SetCursorPos(i.x, i.y);
+                
+                multiMouseInput[0].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+                multiMouseInput[0].mi.dx = i.x;
+                multiMouseInput[0].mi.dy = i.y;
+                multiMouseInput[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+                multiMouseInput[1].mi.dx = i.x;
+                multiMouseInput[1].mi.dy = i.y;
+                
+                SendInput(2, multiMouseInput, sizeof(INPUT));
+                std::this_thread::sleep_for(std::chrono::milliseconds(905/multiClicksPerSecond));
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / (loopsPerSecond + 1)));
         }
     }
 }
