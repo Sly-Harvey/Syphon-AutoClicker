@@ -46,6 +46,23 @@ void ChangeCurserPos(int x, int y)
     SetConsoleCursorPosition(hConsole, newCurserPos);
 }
 
+void setConsoleSize(int width, int height)
+{
+    SMALL_RECT r;
+    COORD c;
+
+    r.Left = 0;
+    r.Top = 0;
+    r.Right = width;
+    r.Bottom = height;
+
+    c.X = width;
+    c.Y = height;
+
+    SetConsoleScreenBufferSize(hConsole, c);
+    SetConsoleWindowInfo(hConsole, TRUE, &r);
+}
+
 void ShowConsoleCursor(bool showFlag)
 {
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -88,6 +105,7 @@ void menu(int& cps, int& maxCps, std::string& toggleDisplay)
 void mutiTargetmenu(std::string& toggleDisplay)
 {
     ShowConsoleCursor(false);
+    std::cout << std::flush;
     system("cls");
 #if PR_DEBUG == 1
     std::cout << " [DEBUG MODE]" << std::endl;
@@ -109,9 +127,9 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Press F7 to delete all positions" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press PageUp to add a location" << std::endl;
+    std::cout << " Press PageUp to add a position" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press PageDown to delete a location" << std::endl;
+    std::cout << " Press PageDown to delete last position" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Press Insert to go to single target mode" << std::endl;
     std::cout << "" << std::endl;
@@ -129,31 +147,13 @@ void inputHandling()
     while (true)
     {
 
-        //if (GetAsyncKeyState(VK_PAUSE) & 1)
-        //{
-        //    cursorPositions.clear();
-        //    exit(0);
-        //}
-
-        if (GetAsyncKeyState(VK_DELETE) & 1)
-        {
-            windowShown = !windowShown;
-            if (windowShown)
-            {
-                ShowWindow(consoleWindow, SW_SHOWNORMAL);
-            }
-            if (!windowShown)
-            {
-                ShowWindow(consoleWindow, SW_MINIMIZE);
-            }
-        }
+        
 
         if (GetAsyncKeyState(VK_INSERT) & 1)
         {
             userError = false;
             toggle = false;
             toggleDisplay = "False";
-            ShowConsoleCursor(true);
 
             if (multiTargetMode == false && rememberMultiSettings == false)
             {
@@ -164,8 +164,10 @@ void inputHandling()
 
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
+                setConsoleSize(42, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
+                setConsoleSize(42, 26);
 #endif
                 system("cls");
                 std::cout << " Enter desired clicks per second: ";
@@ -189,8 +191,10 @@ void inputHandling()
 
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
+                setConsoleSize(42, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
+                setConsoleSize(42, 26);
 #endif
 
                 mutiTargetmenu(toggleDisplay);
@@ -202,9 +206,14 @@ void inputHandling()
                 toggleDisplay = "False";
                 multiToggle = false;
                 multiTargetMode = false;
-                //ZeroMemory(mouseInput, sizeof(INPUT));
                 SetConsoleTextAttribute(hConsole, lightRed);
+#if PR_DEBUG == 1
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
+                setConsoleSize(42, 20);
+#elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
+                setConsoleSize(42, 16);
+#endif
                 menu(cps, maxCps, toggleDisplay);
             }
         }
@@ -440,10 +449,14 @@ int main()
 {
 #if PR_DEBUG == 1
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_SHOWWINDOW);
+    setConsoleSize(42, 20);
 #elif defined(PR_RELEASE)
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_SHOWWINDOW);
+    setConsoleSize(42, 16);
 #endif
+
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+    SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
     SetConsoleTextAttribute(hConsole, lightRed);
     SetConsoleTitleA("Syphon AutoClicker");
 
@@ -493,8 +506,44 @@ int main()
     {
         if (GetAsyncKeyState(VK_PAUSE) & 1)
         {
-            cursorPositions.clear();
             exit(0);
+        }
+
+        if (GetAsyncKeyState(VK_DELETE) & 1)
+        {
+            windowShown = !windowShown;
+            if (windowShown)
+            {
+                ShowWindow(consoleWindow, SW_SHOWNORMAL);
+
+#if PR_DEBUG == 1
+                if (multiTargetMode)
+                {
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
+                }
+                else if (!multiTargetMode)
+                {
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
+                    setConsoleSize(42, 20);
+                    menu(cps, maxCps, toggleDisplay);
+                }
+#elif defined(PR_RELEASE)
+                if (multiTargetMode)
+                {
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
+                }
+                else if (!multiTargetMode)
+                {
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
+                    setConsoleSize(42, 16);
+                    menu(cps, maxCps, toggleDisplay);
+                }
+#endif
+            }
+            if (!windowShown)
+            {
+                ShowWindow(consoleWindow, SW_MINIMIZE);
+            }
         }
 
         if (toggle)
