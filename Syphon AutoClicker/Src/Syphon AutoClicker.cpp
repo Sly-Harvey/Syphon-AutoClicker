@@ -574,7 +574,7 @@ int main()
                 std::this_thread::sleep_for(std::chrono::milliseconds(905/multiClicksPerSecond));
             }
         }
-        else if (!toggle && multiToggle == false)
+        else if (!toggle && !multiToggle)
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
