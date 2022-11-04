@@ -125,7 +125,7 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Press F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press F7 to delete all positions" << std::endl;
+    std::cout << " Press F9 to delete all positions" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Press PageUp to add a position" << std::endl;
     std::cout << "" << std::endl;
@@ -161,6 +161,8 @@ void inputHandling()
                 multiTargetMode = true;
                 rememberMultiSettings = true;
                 SetConsoleTextAttribute(hConsole, darkRed);
+                if(windowShown)
+                    SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
@@ -188,6 +190,8 @@ void inputHandling()
                 multiToggle = false;
                 multiTargetMode = true;
                 SetConsoleTextAttribute(hConsole, darkRed);
+                if (windowShown)
+                    SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
@@ -207,6 +211,8 @@ void inputHandling()
                 multiToggle = false;
                 multiTargetMode = false;
                 SetConsoleTextAttribute(hConsole, lightRed);
+                if (windowShown)
+                    SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
                 setConsoleSize(42, 20);
@@ -243,7 +249,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_F7) & 1)
+            if (GetAsyncKeyState(VK_F9) & 1)
             {
                 cursorPositions.clear();
 
@@ -568,5 +574,7 @@ int main()
                 std::this_thread::sleep_for(std::chrono::milliseconds(905/multiClicksPerSecond));
             }
         }
+        else if (!toggle && multiToggle == false)
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
