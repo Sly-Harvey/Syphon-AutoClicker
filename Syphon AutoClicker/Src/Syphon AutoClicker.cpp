@@ -21,6 +21,7 @@ bool multiToggle = false;
 bool toggle = false;
 std::string toggleDisplay = "False";
 
+POINT cursorPos;
 std::vector<POINT> cursorPositions;
 int multiClicksPerSecond = 0;
 int maxMultiClicksPerSecond = 1000;
@@ -123,21 +124,23 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Max Clicks per second: " << maxMultiClicksPerSecond << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press F8 to toggle clicking" << std::endl;
+    std::cout << " F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press F9 to delete all positions" << std::endl;
+    std::cout << " F9 to delete all positions" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press PageUp to add a position" << std::endl;
+    std::cout << " Ctrl+Mouse Button 2 to add a position" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press PageDown to delete last position" << std::endl;
+    std::cout << " Ctrl+Mouse Button 1 to delete last position" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Insert to go to single target mode" << std::endl;
+    std::cout << " Ctrl+Alt to add/remove 5 positions" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Home to change cps" << std::endl;
+    std::cout << " Insert to go to single target mode" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Delete to minimize/maximize" << std::endl;
+    std::cout << " Home to change cps" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Pause to terminate the program" << std::endl;
+    std::cout << " Delete to minimize/maximize" << std::endl;
+    std::cout << "" << std::endl;
+    std::cout << " Pause to terminate the program" << std::endl;
 
     GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
 }
@@ -165,11 +168,12 @@ void inputHandling()
                     SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
+                //untested
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleSize(42, 30);
+                setConsoleSize(46, 30);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
-                setConsoleSize(42, 26);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
+                setConsoleSize(46, 28);
 #endif
                 system("cls");
                 std::cout << " Enter desired clicks per second: ";
@@ -194,11 +198,12 @@ void inputHandling()
                     SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
+                //untested
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleSize(42, 30);
+                setConsoleSize(46, 30);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
-                setConsoleSize(42, 26);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
+                setConsoleSize(46, 28);
 #endif
 
                 mutiTargetmenu(toggleDisplay);
@@ -214,11 +219,11 @@ void inputHandling()
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
-                setConsoleSize(42, 20);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 360, SWP_NOMOVE);
+                setConsoleSize(40, 20);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
-                setConsoleSize(42, 16);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 300, SWP_NOMOVE);
+                setConsoleSize(40, 16);
 #endif
                 menu(cps, maxCps, toggleDisplay);
             }
@@ -263,9 +268,8 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_PRIOR) & 1)
+            if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_XBUTTON2) & 1)
             {
-                POINT cursorPos;
                 GetCursorPos(&cursorPos);
                 cursorPositions.push_back(cursorPos);
 
@@ -277,11 +281,45 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_NEXT) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_XBUTTON1) & 1)
             {
                 if (!cursorPositions.empty())
                 {
                     cursorPositions.pop_back();
+                }
+
+#if PR_DEBUG == 1
+                ChangeCurserPos(12, 4);
+#elif defined(PR_RELEASE)
+                ChangeCurserPos(12, 4);
+#endif
+                std::cout << cursorPositions.size() << " " << std::endl;
+                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+            }
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_XBUTTON2) & 1)
+            {
+                GetCursorPos(&cursorPos);
+                for (int i = 0; i < 5; i++)
+                {
+                    cursorPositions.push_back(cursorPos);
+                }
+
+#if PR_DEBUG == 1
+                ChangeCurserPos(12, 4);
+#elif defined(PR_RELEASE)
+                ChangeCurserPos(12, 4);
+#endif
+                std::cout << cursorPositions.size() << "     " << std::endl;
+                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+            }
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_XBUTTON1) & 1)
+            {
+                if (!cursorPositions.empty())
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        cursorPositions.pop_back();
+                    }
                 }
 
 #if PR_DEBUG == 1
@@ -457,7 +495,7 @@ int main()
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_SHOWWINDOW);
     setConsoleSize(42, 20);
 #elif defined(PR_RELEASE)
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_SHOWWINDOW);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 300, SWP_SHOWWINDOW);
     setConsoleSize(42, 16);
 #endif
 
