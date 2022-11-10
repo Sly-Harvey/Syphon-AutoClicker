@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -26,7 +25,7 @@ POINT cursorPos;
 std::vector<POINT> cursorPositions;
 
 int multiClicksPerSecond = 0;
-int maxMultiClicksPerSecond = 1000;
+const int maxMultiClicksPerSecond = 1000;
 std::string multiClicksPerSecondString;
 
 bool rememberMultiSettings = false;
@@ -37,7 +36,7 @@ bool multiUserError = false;
 int timeResolution = 3;
 TIMECAPS timeCap;
 
-int maxCps = 5000;
+const int maxCps = 5000;
 int cps = 0;
 std::string cpsString;
 
@@ -76,10 +75,9 @@ void ShowConsoleCursor(bool showFlag)
     SetConsoleCursorInfo(hConsoleOutput, &cursorInfo);
 }
 
-void menu(int& cps, int& maxCps, std::string& toggleDisplay)
+void menu()
 {
     ShowConsoleCursor(false);
-    std::cout << std::flush;
     system("cls");
 #if PR_DEBUG == 1
     std::cout << " [DEBUG MODE]" << std::endl;
@@ -106,10 +104,9 @@ void menu(int& cps, int& maxCps, std::string& toggleDisplay)
     GetConsoleScreenBufferInfo(hConsoleOutput, &endConsoleCurserPos);
 }
 
-void mutiTargetmenu(std::string& toggleDisplay)
+void mutiTargetmenu()
 {
     ShowConsoleCursor(false);
-    std::cout << std::flush;
     system("cls");
 #if PR_DEBUG == 1
     std::cout << " [DEBUG MODE]" << std::endl;
@@ -129,11 +126,11 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " F9 to delete all positions" << std::endl;
+    std::cout << " Alt+R to delete all positions" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Ctrl+Mouse Button 2 to add a position" << std::endl;
+    std::cout << " Alt+Z to add a position" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Ctrl+Mouse Button 1 to delete last position" << std::endl;
+    std::cout << " Alt+X to delete last position" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Ctrl+Alt to add/remove 5 positions" << std::endl;
     std::cout << "" << std::endl;
@@ -190,7 +187,7 @@ void inputHandling()
                     multiUserError = true;
                 }
 
-                mutiTargetmenu(toggleDisplay);
+                mutiTargetmenu();
             }
             else if (multiTargetMode == false && rememberMultiSettings == true)
             {
@@ -209,7 +206,7 @@ void inputHandling()
                 setConsoleBufferSize(46, 28);
 #endif
 
-                mutiTargetmenu(toggleDisplay);
+                mutiTargetmenu();
             }
             else if (multiTargetMode == true)
             {
@@ -228,7 +225,7 @@ void inputHandling()
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_NOMOVE);
                 setConsoleBufferSize(34, 16);
 #endif
-                menu(cps, maxCps, toggleDisplay);
+                menu();
             }
         }
 
@@ -362,9 +359,9 @@ void inputHandling()
                 userError = true;
             }
             if (multiTargetMode == true)
-                mutiTargetmenu(toggleDisplay);
+                mutiTargetmenu();
             else
-                menu(cps, maxCps, toggleDisplay);
+                menu();
         }
 
         while (multiUserError || multiClicksPerSecond > maxMultiClicksPerSecond)
@@ -393,9 +390,9 @@ void inputHandling()
             }
 
             if (multiTargetMode == true)
-                mutiTargetmenu(toggleDisplay);
+                mutiTargetmenu();
             else
-                menu(cps, maxCps, toggleDisplay);
+                menu();
         }
 
         if (multiTargetMode == false)
@@ -454,9 +451,9 @@ void inputHandling()
                         userError = true;
                     }
                     if (multiTargetMode == true)
-                        mutiTargetmenu(toggleDisplay);
+                        mutiTargetmenu();
                     else
-                        menu(cps, maxCps, toggleDisplay);
+                        menu();
                 }
             }
             else if (multiTargetMode == true)
@@ -486,7 +483,7 @@ void inputHandling()
                         multiUserError = true;
                     }
 
-                    mutiTargetmenu(toggleDisplay);
+                    mutiTargetmenu();
                 }
             }
         }
@@ -541,9 +538,9 @@ int main()
     {
         cps = boost::lexical_cast<int>(cpsString);
         if (multiTargetMode == true)
-            mutiTargetmenu(toggleDisplay);
+            mutiTargetmenu();
         else
-            menu(cps, maxCps, toggleDisplay);
+            menu();
     }
     catch (boost::bad_lexical_cast e)
     {
@@ -575,7 +572,7 @@ int main()
                 {
                     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
                     setConsoleBufferSize(42, 20);
-                    menu(cps, maxCps, toggleDisplay);
+                    menu();
                 }
 #elif defined(PR_RELEASE)
                 if (multiTargetMode)
@@ -586,7 +583,7 @@ int main()
                 {
                     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
                     setConsoleBufferSize(42, 16);
-                    menu(cps, maxCps, toggleDisplay);
+                    menu();
                 }
 #endif
             }
