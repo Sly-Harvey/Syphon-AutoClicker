@@ -47,7 +47,7 @@ void ChangeCurserPos(int x, int y)
     SetConsoleCursorPosition(hConsole, newCurserPos);
 }
 
-void setConsoleSize(int width, int height)
+void setConsoleBufferSize(int width, int height)
 {
     SMALL_RECT r;
     COORD c;
@@ -90,15 +90,15 @@ void menu(int& cps, int& maxCps, std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Max cps: " << maxCps << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Mouse Button 5 to toggle clicking" << std::endl;
+    std::cout << " Mouse Button 5 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Insert to go to multi target mode" << std::endl;
+    std::cout << " Insert to go to multi target mode" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Home to change cps" << std::endl;
+    std::cout << " Home to change cps" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Delete to minimize/maximize" << std::endl;
+    std::cout << " Delete to minimize/maximize" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Press Pause to terminate the program" << std::endl;
+    std::cout << " Pause to terminate the program" << std::endl;
 
     GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
 }
@@ -170,10 +170,10 @@ void inputHandling()
 #if PR_DEBUG == 1
                 //untested
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleSize(46, 30);
+                setConsoleBufferSize(46, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
-                setConsoleSize(46, 28);
+                setConsoleBufferSize(46, 28);
 #endif
                 system("cls");
                 std::cout << " Enter desired clicks per second: ";
@@ -200,10 +200,10 @@ void inputHandling()
 #if PR_DEBUG == 1
                 //untested
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleSize(46, 30);
+                setConsoleBufferSize(46, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
-                setConsoleSize(46, 28);
+                setConsoleBufferSize(46, 28);
 #endif
 
                 mutiTargetmenu(toggleDisplay);
@@ -219,11 +219,11 @@ void inputHandling()
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 360, SWP_NOMOVE);
-                setConsoleSize(40, 20);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 360, SWP_NOMOVE);
+                setConsoleBufferSize(34, 20);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 300, SWP_NOMOVE);
-                setConsoleSize(40, 16);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_NOMOVE);
+                setConsoleBufferSize(34, 16);
 #endif
                 menu(cps, maxCps, toggleDisplay);
             }
@@ -268,7 +268,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_XBUTTON2) & 1)
+            if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0 && GetAsyncKeyState(VK_XBUTTON2) & 1)
             {
                 GetCursorPos(&cursorPos);
                 cursorPositions.push_back(cursorPos);
@@ -281,7 +281,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_XBUTTON1) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0 && GetAsyncKeyState(VK_XBUTTON1) & 1)
             {
                 if (!cursorPositions.empty())
                 {
@@ -492,11 +492,11 @@ void inputHandling()
 int main()
 {
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_SHOWWINDOW);
-    setConsoleSize(42, 20);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 360, SWP_SHOWWINDOW);
+    setConsoleBufferSize(36, 20);
 #elif defined(PR_RELEASE)
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 355, 300, SWP_SHOWWINDOW);
-    setConsoleSize(42, 16);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_SHOWWINDOW);
+    setConsoleBufferSize(36, 16);
 #endif
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
@@ -568,7 +568,7 @@ int main()
                 else if (!multiTargetMode)
                 {
                     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
-                    setConsoleSize(42, 20);
+                    setConsoleBufferSize(42, 20);
                     menu(cps, maxCps, toggleDisplay);
                 }
 #elif defined(PR_RELEASE)
@@ -579,7 +579,7 @@ int main()
                 else if (!multiTargetMode)
                 {
                     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
-                    setConsoleSize(42, 16);
+                    setConsoleBufferSize(42, 16);
                     menu(cps, maxCps, toggleDisplay);
                 }
 #endif
