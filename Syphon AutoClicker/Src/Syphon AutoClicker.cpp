@@ -268,7 +268,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0 && GetAsyncKeyState(VK_XBUTTON2) & 1)
+            if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x5A) & 1)
             {
                 GetCursorPos(&cursorPos);
                 cursorPositions.push_back(cursorPos);
@@ -281,7 +281,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0 && GetAsyncKeyState(VK_XBUTTON1) & 1)
+            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x58) & 1)
             {
                 if (!cursorPositions.empty())
                 {
@@ -296,7 +296,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << " " << std::endl;
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_XBUTTON2) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x5A) & 1)
             {
                 GetCursorPos(&cursorPos);
                 for (int i = 0; i < 5; i++)
@@ -312,14 +312,18 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_XBUTTON1) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x58) & 1)
             {
-                if (!cursorPositions.empty())
+                if (cursorPositions.size() >= 5)
                 {
                     for (int i = 0; i < 5; i++)
                     {
                         cursorPositions.pop_back();
                     }
+                }
+                else
+                {
+                    cursorPositions.clear();
                 }
 
 #if PR_DEBUG == 1
