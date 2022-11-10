@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -11,7 +12,7 @@ INPUT mouseInput[2]; // do not put this is main function because your pc will cr
 INPUT multiMouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
 
 bool windowShown = true;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+HANDLE hConsoleOutput, hConsoleInput;
 HWND consoleWindow = GetConsoleWindow();
 CONSOLE_SCREEN_BUFFER_INFO endConsoleCurserPos;
 
@@ -23,10 +24,12 @@ std::string toggleDisplay = "False";
 
 POINT cursorPos;
 std::vector<POINT> cursorPositions;
+
 int multiClicksPerSecond = 0;
 int maxMultiClicksPerSecond = 1000;
-bool rememberMultiSettings = false;
 std::string multiClicksPerSecondString;
+
+bool rememberMultiSettings = false;
 
 bool userError = false;
 bool multiUserError = false;
@@ -44,7 +47,7 @@ const int lightRed = 12;
 void ChangeCurserPos(int x, int y)
 {
     COORD newCurserPos = { x, y };
-    SetConsoleCursorPosition(hConsole, newCurserPos);
+    SetConsoleCursorPosition(hConsoleOutput, newCurserPos);
 }
 
 void setConsoleBufferSize(int width, int height)
@@ -60,17 +63,17 @@ void setConsoleBufferSize(int width, int height)
     c.X = width;
     c.Y = height;
 
-    SetConsoleScreenBufferSize(hConsole, c);
-    SetConsoleWindowInfo(hConsole, TRUE, &r);
+    SetConsoleScreenBufferSize(hConsoleOutput, c);
+    SetConsoleWindowInfo(hConsoleOutput, TRUE, &r);
 }
 
 void ShowConsoleCursor(bool showFlag)
 {
     CONSOLE_CURSOR_INFO cursorInfo;
 
-    GetConsoleCursorInfo(hConsole, &cursorInfo);
+    GetConsoleCursorInfo(hConsoleOutput, &cursorInfo);
     cursorInfo.bVisible = showFlag; // set the cursor visibility
-    SetConsoleCursorInfo(hConsole, &cursorInfo);
+    SetConsoleCursorInfo(hConsoleOutput, &cursorInfo);
 }
 
 void menu(int& cps, int& maxCps, std::string& toggleDisplay)
@@ -100,7 +103,7 @@ void menu(int& cps, int& maxCps, std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Pause to terminate the program" << std::endl;
 
-    GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
+    GetConsoleScreenBufferInfo(hConsoleOutput, &endConsoleCurserPos);
 }
 
 void mutiTargetmenu(std::string& toggleDisplay)
@@ -142,7 +145,7 @@ void mutiTargetmenu(std::string& toggleDisplay)
     std::cout << "" << std::endl;
     std::cout << " Pause to terminate the program" << std::endl;
 
-    GetConsoleScreenBufferInfo(hConsole, &endConsoleCurserPos);
+    GetConsoleScreenBufferInfo(hConsoleOutput, &endConsoleCurserPos);
 }
 
 void inputHandling()
@@ -163,7 +166,7 @@ void inputHandling()
                 multiToggle = false;
                 multiTargetMode = true;
                 rememberMultiSettings = true;
-                SetConsoleTextAttribute(hConsole, darkRed);
+                SetConsoleTextAttribute(hConsoleOutput, darkRed);
                 if(windowShown)
                     SetForegroundWindow(consoleWindow);
 
@@ -193,7 +196,7 @@ void inputHandling()
             {
                 multiToggle = false;
                 multiTargetMode = true;
-                SetConsoleTextAttribute(hConsole, darkRed);
+                SetConsoleTextAttribute(hConsoleOutput, darkRed);
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 
@@ -215,7 +218,7 @@ void inputHandling()
                 toggleDisplay = "False";
                 multiToggle = false;
                 multiTargetMode = false;
-                SetConsoleTextAttribute(hConsole, lightRed);
+                SetConsoleTextAttribute(hConsoleOutput, lightRed);
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
@@ -251,7 +254,7 @@ void inputHandling()
                 ChangeCurserPos(11, 2);
 #endif
                 std::cout << toggleDisplay << " " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
             if (GetAsyncKeyState(VK_F9) & 1)
@@ -265,7 +268,7 @@ void inputHandling()
 #endif
 
                 std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
             if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x5A) & 1)
@@ -279,7 +282,7 @@ void inputHandling()
                 ChangeCurserPos(12, 4);
 #endif
                 std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
             else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x58) & 1)
             {
@@ -294,7 +297,7 @@ void inputHandling()
                 ChangeCurserPos(12, 4);
 #endif
                 std::cout << cursorPositions.size() << " " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
             else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x5A) & 1)
             {
@@ -310,7 +313,7 @@ void inputHandling()
                 ChangeCurserPos(12, 4);
 #endif
                 std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
             else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x58) & 1)
             {
@@ -332,7 +335,7 @@ void inputHandling()
                 ChangeCurserPos(12, 4);
 #endif
                 std::cout << cursorPositions.size() << " " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
         }
         
@@ -374,13 +377,11 @@ void inputHandling()
             ShowConsoleCursor(true);
 
             system("cls");
-            std::cout << " Only whole numbers are allowed" << std::endl;
-            std::cout << "";
-            std::cout << " Max multi clicks per second is " << maxMultiClicksPerSecond << std::endl;
-            std::cout << "";
+            std::cout << " Only whole numbers are allowed." << std::endl;
+            std::cout << " Max multi clicks per second is " << maxMultiClicksPerSecond << '.' << std::endl;
             std::cout << " Please try again." << std::endl;
             std::cout << "" << std::endl;
-            std::cout << " Enter desired clicks per second: ";
+            std::cout << " Enter desired clicks per second: " << std::flush;
             std::cin >> multiClicksPerSecondString;
             try
             {
@@ -419,7 +420,7 @@ void inputHandling()
                 ChangeCurserPos(11, 0);
 #endif
                 std::cout << toggleDisplay << " " << std::endl;
-                SetConsoleCursorPosition(hConsole, endConsoleCurserPos.dwCursorPosition);
+                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
         }
         if (windowShown)
@@ -433,12 +434,12 @@ void inputHandling()
                     toggle = false;
                     multiToggle = false;
                     toggleDisplay = "False";
-
-                    std::cout << std::flush;
                     ShowConsoleCursor(true);
                     SetForegroundWindow(consoleWindow);
                     system("cls");
-                    std::cout << " Enter desired cps: ";
+                    FlushConsoleInputBuffer(hConsoleInput);
+
+                    std::cout << " Enter desired cps: " << std::flush;
                     std::cin >> cpsString;
                     try
                     {
@@ -472,7 +473,9 @@ void inputHandling()
                     ShowConsoleCursor(true);
                     SetForegroundWindow(consoleWindow);
                     system("cls");
-                    std::cout << " Enter desired clicks per second: ";
+                    FlushConsoleInputBuffer(hConsoleInput);
+
+                    std::cout << " Enter desired clicks per second: " << std::flush;
                     std::cin >> multiClicksPerSecondString;
                     try
                     {
@@ -482,8 +485,6 @@ void inputHandling()
                     {
                         multiUserError = true;
                     }
-
-                    std::cout.flush();
 
                     mutiTargetmenu(toggleDisplay);
                 }
@@ -495,6 +496,8 @@ void inputHandling()
 
 int main()
 {
+    hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 #if PR_DEBUG == 1
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 360, SWP_SHOWWINDOW);
     setConsoleBufferSize(36, 20);
@@ -505,7 +508,7 @@ int main()
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
     SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
-    SetConsoleTextAttribute(hConsole, lightRed);
+    SetConsoleTextAttribute(hConsoleOutput, lightRed);
     SetConsoleTitleA("Syphon AutoClicker");
 
     mouseInput->type = INPUT_MOUSE;
@@ -532,16 +535,15 @@ int main()
         timeResolution = timeCap.wPeriodMin;
     }
 
+    std::cout << " Enter desired cps: " << std::flush;
+    std::cin >> cpsString;
     try
     {
-        std::cout << " Enter desired cps: ";
-        std::cin >> cpsString;
         cps = boost::lexical_cast<int>(cpsString);
         if (multiTargetMode == true)
             mutiTargetmenu(toggleDisplay);
         else
             menu(cps, maxCps, toggleDisplay);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     catch (boost::bad_lexical_cast e)
     {
