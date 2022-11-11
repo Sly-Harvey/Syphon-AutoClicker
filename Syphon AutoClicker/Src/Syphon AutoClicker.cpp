@@ -296,8 +296,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
-
-            if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_Z) & 1)
+            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_Z) & 1)
             {
                 GetCursorPos(&cursorPos);
                 cursorPositions.push_back(cursorPos);
@@ -363,6 +362,8 @@ void inputHandling()
                 std::cout << cursorPositions.size() << " " << std::endl;
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
+            else if(GetAsyncKeyState(VK_X) & 1 || GetAsyncKeyState(VK_R) & 1 || GetAsyncKeyState(VK_Z) & 1 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0)
+                FlushConsoleInputBuffer(hConsoleInput);
         }
         
         while (userError || cps > maxCps)
