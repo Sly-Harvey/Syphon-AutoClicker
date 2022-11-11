@@ -7,6 +7,33 @@
 #include <Windows.h>
 #include "boost/lexical_cast.hpp"
 
+#define VK_A 0x41
+#define VK_B 0x42
+#define VK_C 0x43
+#define VK_D 0x44
+#define VK_E 0x45
+#define VK_F 0x46
+#define VK_G 0x47
+#define VK_H 0x48
+#define VK_I 0x49
+#define VK_J 0x4A
+#define VK_K 0x4B
+#define VK_L 0x4C
+#define VK_M 0x4D
+#define VK_N 0x4E
+#define VK_O 0x4F
+#define VK_P 0x50
+#define VK_Q 0x51
+#define VK_R 0x52
+#define VK_S 0x53
+#define VK_T 0x54
+#define VK_U 0x55
+#define VK_V 0x56
+#define VK_W 0x57
+#define VK_X 0x58
+#define VK_Y 0x59
+#define VK_Z 0x5A
+
 INPUT mouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
 INPUT multiMouseInput[2]; // do not put this is main function because your pc will crash and you will have a black screen.
 
@@ -222,10 +249,10 @@ void inputHandling()
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_NOMOVE);
-                setConsoleBufferSize(36, 18);
+                setConsoleBufferSize(34, 18);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
-                setConsoleBufferSize(36, 14);
+                setConsoleBufferSize(34, 14);
 #endif
                 menu();
             }
@@ -256,7 +283,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x52) & 1)
+            if (GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_R) & 1)
             {
                 cursorPositions.clear();
 
@@ -270,7 +297,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x5A) & 1)
+            if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_Z) & 1)
             {
                 GetCursorPos(&cursorPos);
                 cursorPositions.push_back(cursorPos);
@@ -283,7 +310,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(0x58) & 1)
+            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_X) & 1)
             {
                 if (!cursorPositions.empty())
                 {
@@ -298,7 +325,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << " " << std::endl;
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x5A) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_Z) & 1)
             {
                 GetCursorPos(&cursorPos);
                 for (int i = 0; i < 5; i++)
@@ -314,7 +341,7 @@ void inputHandling()
                 std::cout << cursorPositions.size() << "     " << std::endl;
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x58) & 1)
+            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_X) & 1)
             {
                 if (cursorPositions.size() >= 5)
                 {
@@ -503,8 +530,8 @@ int main()
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_SHOWWINDOW);
     setConsoleBufferSize(36, 18);
 #elif defined(PR_RELEASE)
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW); // original SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_SHOWWINDOW);
-    setConsoleBufferSize(36, 14); // original setConsoleBufferSize(36, 16);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW);
+    setConsoleBufferSize(36, 14);
 #endif
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
