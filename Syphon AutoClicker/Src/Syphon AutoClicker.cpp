@@ -89,8 +89,8 @@ void menu()
     std::cout << "" << std::endl;
     std::cout << " Current cps: " << cps << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Max cps: " << maxCps << std::endl;
-    std::cout << "" << std::endl;
+    //std::cout << " Max cps: " << maxCps << std::endl;
+    //std::cout << "" << std::endl;
     std::cout << " Mouse Button 5 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Insert to go to multi target mode" << std::endl;
@@ -122,8 +122,8 @@ void mutiTargetmenu()
     std::cout << "" << std::endl;
     std::cout << " Clicks per second: " << multiClicksPerSecond << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Max Clicks per second: " << maxMultiClicksPerSecond << std::endl;
-    std::cout << "" << std::endl;
+    //std::cout << " Max Clicks per second: " << maxMultiClicksPerSecond << std::endl;
+    //std::cout << "" << std::endl;
     std::cout << " F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Alt+R to delete all positions" << std::endl;
@@ -169,14 +169,16 @@ void inputHandling()
 
 #if PR_DEBUG == 1
                 //untested
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleBufferSize(46, 30);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 485, SWP_NOMOVE);
+                setConsoleBufferSize(37, 30);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
-                setConsoleBufferSize(46, 28);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
+                setConsoleBufferSize(37, 26);
 #endif
                 system("cls");
-                std::cout << " Enter desired clicks per second: ";
+                FlushConsoleInputBuffer(hConsoleInput);
+
+                std::cout << " Enter desired cps: " << std::flush;
                 std::cin >> multiClicksPerSecondString;
                 try
                 {
@@ -199,11 +201,11 @@ void inputHandling()
 
 #if PR_DEBUG == 1
                 //untested
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
-                setConsoleBufferSize(46, 30);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 485, SWP_NOMOVE);
+                setConsoleBufferSize(37, 30);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 390, 490, SWP_NOMOVE);
-                setConsoleBufferSize(46, 28);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
+                setConsoleBufferSize(37, 26);
 #endif
 
                 mutiTargetmenu();
@@ -219,11 +221,11 @@ void inputHandling()
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 360, SWP_NOMOVE);
-                setConsoleBufferSize(34, 20);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_NOMOVE);
+                setConsoleBufferSize(36, 18);
 #elif defined(PR_RELEASE)
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_NOMOVE);
-                setConsoleBufferSize(34, 16);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
+                setConsoleBufferSize(36, 14);
 #endif
                 menu();
             }
@@ -254,7 +256,7 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_F9) & 1)
+            if (GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(0x52) & 1)
             {
                 cursorPositions.clear();
 
@@ -341,10 +343,11 @@ void inputHandling()
             userError = false;
             toggle = false;
             toggleDisplay = "False";
-            ShowConsoleCursor(true);
             cps = 0;
-
+            ShowConsoleCursor(true);
             system("cls");
+            FlushConsoleInputBuffer(hConsoleInput);
+
             std::cout << " Only whole numbers fewer than " << maxCps << " are allowed." << std::endl;
             std::cout << " Please try again." << std::endl;
             std::cout << "" << std::endl;
@@ -372,8 +375,9 @@ void inputHandling()
             multiClicksPerSecond = 0;
             toggleDisplay = "False";
             ShowConsoleCursor(true);
-
             system("cls");
+            FlushConsoleInputBuffer(hConsoleInput);
+
             std::cout << " Only whole numbers are allowed." << std::endl;
             std::cout << " Max multi clicks per second is " << maxMultiClicksPerSecond << '.' << std::endl;
             std::cout << " Please try again." << std::endl;
@@ -472,7 +476,7 @@ void inputHandling()
                     system("cls");
                     FlushConsoleInputBuffer(hConsoleInput);
 
-                    std::cout << " Enter desired clicks per second: " << std::flush;
+                    std::cout << " Enter desired cps: " << std::flush;
                     std::cin >> multiClicksPerSecondString;
                     try
                     {
@@ -496,11 +500,11 @@ int main()
     hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
     hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 360, SWP_SHOWWINDOW);
-    setConsoleBufferSize(36, 20);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_SHOWWINDOW);
+    setConsoleBufferSize(36, 18);
 #elif defined(PR_RELEASE)
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_SHOWWINDOW);
-    setConsoleBufferSize(36, 16);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW); // original SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 310, 300, SWP_SHOWWINDOW);
+    setConsoleBufferSize(36, 14); // original setConsoleBufferSize(36, 16);
 #endif
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
