@@ -195,8 +195,7 @@ void inputHandling()
                     SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
-                //untested
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 485, SWP_NOMOVE);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 520, SWP_NOMOVE);
                 setConsoleBufferSize(37, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
@@ -227,8 +226,7 @@ void inputHandling()
                     SetForegroundWindow(consoleWindow);
 
 #if PR_DEBUG == 1
-                //untested
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 485, SWP_NOMOVE);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 520, SWP_NOMOVE);
                 setConsoleBufferSize(37, 30);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
@@ -248,7 +246,7 @@ void inputHandling()
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_NOMOVE);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_NOMOVE);
                 setConsoleBufferSize(34, 18);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
@@ -376,10 +374,11 @@ void inputHandling()
             system("cls");
             FlushConsoleInputBuffer(hConsoleInput);
 
-            std::cout << " Only whole numbers fewer than " << maxCps << " are allowed." << std::endl;
+            std::cout << " Only whole numbers are allowed." << std::endl;
+            std::cout << " Max clicks per second is " << maxCps << '.' << std::endl;
             std::cout << " Please try again." << std::endl;
             std::cout << "" << std::endl;
-            std::cout << " Enter desired cps: ";
+            std::cout << " Enter desired cps: " << std::flush;
             std::cin >> cpsString;
             try
             {
@@ -407,7 +406,7 @@ void inputHandling()
             FlushConsoleInputBuffer(hConsoleInput);
 
             std::cout << " Only whole numbers are allowed." << std::endl;
-            std::cout << " Max multi clicks per second is " << maxMultiClicksPerSecond << '.' << std::endl;
+            std::cout << " Max clicks per second is " << maxMultiClicksPerSecond << '.' << std::endl;
             std::cout << " Please try again." << std::endl;
             std::cout << "" << std::endl;
             std::cout << " Enter desired clicks per second: " << std::flush;
@@ -528,7 +527,7 @@ int main()
     hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
     hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 325, SWP_SHOWWINDOW);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_SHOWWINDOW);
     setConsoleBufferSize(36, 18);
 #elif defined(PR_RELEASE)
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW);
@@ -598,12 +597,15 @@ int main()
 #if PR_DEBUG == 1
                 if (multiTargetMode)
                 {
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 520, SWP_NOMOVE);
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 520, SWP_NOMOVE);
+                    setConsoleBufferSize(37, 30);
+                    mutiTargetmenu();
                 }
                 else if (!multiTargetMode)
                 {
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 360, SWP_NOMOVE);
-                    setConsoleBufferSize(42, 20);
+                    setConsoleBufferSize(34, 18);
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_NOMOVE);
+                    setConsoleBufferSize(34, 18);
                     menu();
                 }
 #elif defined(PR_RELEASE)
