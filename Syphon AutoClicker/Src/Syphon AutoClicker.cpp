@@ -532,7 +532,7 @@ int main()
     setConsoleBufferSize(36, 18);
 #elif defined(PR_RELEASE)
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW);
-    setConsoleBufferSize(36, 14);
+    setConsoleBufferSize(34, 14);
 #endif
 
     SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
@@ -609,12 +609,16 @@ int main()
 #elif defined(PR_RELEASE)
                 if (multiTargetMode)
                 {
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE);
+                    // SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE); // old one
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
+                    setConsoleBufferSize(37, 26);;
+                    mutiTargetmenu();
                 }
                 else if (!multiTargetMode)
                 {
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 300, SWP_NOMOVE);
-                    setConsoleBufferSize(42, 16);
+                    setConsoleBufferSize(34, 14);
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
+                    setConsoleBufferSize(34, 14);
                     menu();
                 }
 #endif
