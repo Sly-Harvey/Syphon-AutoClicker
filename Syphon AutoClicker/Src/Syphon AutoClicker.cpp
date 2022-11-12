@@ -141,11 +141,11 @@ void mutiTargetmenu()
     std::cout << " [DEBUG]Time Resolution: " << timeResolution << std::endl;
     std::cout << "" << std::endl;
 #endif
-    std::cout << " [MULTI TARGET MODE]" << std::endl;
+    std::cout << " [MULTIPLE TARGET MODE]" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Clicking: " << toggleDisplay << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Positions: " << cursorPositions.size() << std::endl;
+    std::cout << " Clicking positions: " << cursorPositions.size() << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Clicks per second: " << multiClicksPerSecond << std::endl;
     std::cout << "" << std::endl;
@@ -246,7 +246,7 @@ void inputHandling()
                 if (windowShown)
                     SetForegroundWindow(consoleWindow);
 #if PR_DEBUG == 1
-                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_NOMOVE);
+                SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 330, SWP_NOMOVE);
                 setConsoleBufferSize(34, 18);
 #elif defined(PR_RELEASE)
                 SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
@@ -281,87 +281,97 @@ void inputHandling()
                 SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
 
-            if (GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_R) & 1)
+            if (GetAsyncKeyState(VK_R) & 1)
             {
-                cursorPositions.clear();
-
-#if PR_DEBUG == 1
-                ChangeCurserPos(12, 4);
-#elif defined(PR_RELEASE)
-                ChangeCurserPos(12, 4);
-#endif
-
-                std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
-            }
-            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_Z) & 1)
-            {
-                GetCursorPos(&cursorPos);
-                cursorPositions.push_back(cursorPos);
-
-#if PR_DEBUG == 1
-                ChangeCurserPos(12, 4);
-#elif defined(PR_RELEASE)
-                ChangeCurserPos(12, 4);
-#endif
-                std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
-            }
-            else if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && GetAsyncKeyState(VK_X) & 1)
-            {
-                if (!cursorPositions.empty())
+                if (GetAsyncKeyState(VK_MENU) & 0x8000)
                 {
-                    cursorPositions.pop_back();
+                    cursorPositions.clear();
+
+#if PR_DEBUG == 1
+                    ChangeCurserPos(21, 8);
+#elif defined(PR_RELEASE)
+                    ChangeCurserPos(21, 4);
+#endif
+
+                    std::cout << cursorPositions.size() << "     " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
                 }
-
-#if PR_DEBUG == 1
-                ChangeCurserPos(12, 4);
-#elif defined(PR_RELEASE)
-                ChangeCurserPos(12, 4);
-#endif
-                std::cout << cursorPositions.size() << " " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
             }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_Z) & 1)
+            else if (GetAsyncKeyState(VK_Z) & 1)
             {
-                GetCursorPos(&cursorPos);
-                for (int i = 0; i < 5; i++)
+                if (GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0)
                 {
+                    GetCursorPos(&cursorPos);
                     cursorPositions.push_back(cursorPos);
-                }
 
 #if PR_DEBUG == 1
-                ChangeCurserPos(12, 4);
+                    ChangeCurserPos(21, 8);
 #elif defined(PR_RELEASE)
-                ChangeCurserPos(12, 4);
+                    ChangeCurserPos(21, 4);
 #endif
-                std::cout << cursorPositions.size() << "     " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
-            }
-            else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000 && GetAsyncKeyState(VK_X) & 1)
-            {
-                if (cursorPositions.size() >= 5)
+                    std::cout << cursorPositions.size() << "     " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                }
+                else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000)
                 {
+                    GetCursorPos(&cursorPos);
                     for (int i = 0; i < 5; i++)
+                    {
+                        cursorPositions.push_back(cursorPos);
+                    }
+
+#if PR_DEBUG == 1
+                    ChangeCurserPos(21, 8);
+#elif defined(PR_RELEASE)
+                    ChangeCurserPos(21, 4);
+#endif              
+                    std::cout << cursorPositions.size() << "     " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                }
+            }
+            else if (GetAsyncKeyState(VK_X) & 1)
+            {
+                if(GetAsyncKeyState(VK_MENU) & 0x8000 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0)
+                {
+                    if (!cursorPositions.empty())
                     {
                         cursorPositions.pop_back();
                     }
-                }
-                else
-                {
-                    cursorPositions.clear();
-                }
 
 #if PR_DEBUG == 1
-                ChangeCurserPos(12, 4);
+                    ChangeCurserPos(21, 8);
 #elif defined(PR_RELEASE)
-                ChangeCurserPos(12, 4);
+                    ChangeCurserPos(21, 4);
 #endif
-                std::cout << cursorPositions.size() << " " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                    std::cout << cursorPositions.size() << " " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                }
+                else if (GetAsyncKeyState(VK_CONTROL) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000)
+                {
+                    if (cursorPositions.size() >= 5)
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            cursorPositions.pop_back();
+                        }
+                    }
+                    else
+                    {
+                        cursorPositions.clear();
+                    }
+
+#if PR_DEBUG == 1
+                    ChangeCurserPos(21, 8);
+#elif defined(PR_RELEASE)
+                    ChangeCurserPos(21, 4);
+#endif
+                    std::cout << cursorPositions.size() << " " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                    }
             }
-            else if(GetAsyncKeyState(VK_X) & 1 || GetAsyncKeyState(VK_R) & 1 || GetAsyncKeyState(VK_Z) & 1 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0)
-                FlushConsoleInputBuffer(hConsoleInput);
+            // old input buffer fix
+            //else if(GetAsyncKeyState(VK_X) & 1 || GetAsyncKeyState(VK_R) & 1 || GetAsyncKeyState(VK_Z) & 1 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0)
+            //    FlushConsoleInputBuffer(hConsoleInput);
         }
         
         while (userError || cps > maxCps)
@@ -527,8 +537,8 @@ int main()
     hConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
     hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 #if PR_DEBUG == 1
-    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_SHOWWINDOW);
-    setConsoleBufferSize(36, 18);
+    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 330, SWP_SHOWWINDOW);
+    setConsoleBufferSize(34, 18);
 #elif defined(PR_RELEASE)
     SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_SHOWWINDOW);
     setConsoleBufferSize(34, 14);
@@ -604,7 +614,7 @@ int main()
                 else if (!multiTargetMode)
                 {
                     setConsoleBufferSize(34, 18);
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 335, SWP_NOMOVE);
+                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 330, SWP_NOMOVE);
                     setConsoleBufferSize(34, 18);
                     menu();
                 }
