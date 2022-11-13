@@ -118,7 +118,7 @@ void menu()
     std::cout << "" << std::endl;
     //std::cout << " Max cps: " << maxCps << std::endl;
     //std::cout << "" << std::endl;
-    std::cout << " Mouse Button 5 to toggle clicking" << std::endl;
+    std::cout << " Alt+Mouse Button 5 to toggle" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Insert to go to multi target mode" << std::endl;
     std::cout << "" << std::endl;
@@ -440,25 +440,28 @@ void inputHandling()
         {
             if (GetAsyncKeyState(VK_XBUTTON2) & 1)
             {
-                toggle = !toggle;
-                if (toggle)
+                if (GetAsyncKeyState(VK_MENU) & 0x8000)
                 {
-                    timeBeginPeriod(timeResolution);
-                }
-                if (!toggle)
-                {
-                    timeEndPeriod(timeResolution);
-                }
+                    toggle = !toggle;
+                    if (toggle)
+                    {
+                        timeBeginPeriod(timeResolution);
+                    }
+                    if (!toggle)
+                    {
+                        timeEndPeriod(timeResolution);
+                    }
 
-                toggleDisplay = toggle ? "True" : "False";
+                    toggleDisplay = toggle ? "True" : "False";
 
 #if PR_DEBUG == 1
-                ChangeCurserPos(11, 4);
+                    ChangeCurserPos(11, 4);
 #elif defined(PR_RELEASE)
-                ChangeCurserPos(11, 0);
+                    ChangeCurserPos(11, 0);
 #endif
-                std::cout << toggleDisplay << " " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                    std::cout << toggleDisplay << " " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                }
             }
         }
         if (windowShown)
