@@ -1,4 +1,4 @@
-# Syphon-AutoClicker-V2
+# Syphon-AutoClicker
 
 **this is my first C++ project.**
 
