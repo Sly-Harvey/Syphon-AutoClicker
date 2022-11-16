@@ -118,13 +118,13 @@ void menu()
     std::cout << "" << std::endl;
     //std::cout << " Max cps: " << maxCps << std::endl;
     //std::cout << "" << std::endl;
-    std::cout << " Alt+Mouse Button 5 to toggle" << std::endl;
+    std::cout << " Home to change cps" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Insert to go to multi target mode" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Home to change cps" << std::endl;
+    std::cout << " Alt+Mouse Button 5 to toggle" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << " Delete to minimize/maximize" << std::endl;
+    std::cout << " Alt+Delete to minimize/maximize" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Pause to terminate the program" << std::endl;
 
@@ -153,6 +153,12 @@ void mutiTargetmenu()
     //std::cout << "" << std::endl;
     std::cout << " F8 to toggle clicking" << std::endl;
     std::cout << "" << std::endl;
+    std::cout << " Home to change cps" << std::endl;
+    std::cout << "" << std::endl;
+    std::cout << " Insert to go to single target mode" << std::endl;
+    std::cout << "" << std::endl;
+    std::cout << " Alt+Delete to minimize/maximize" << std::endl;
+    std::cout << "" << std::endl;
     std::cout << " Alt+R to delete all positions" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Alt+Z to add a position" << std::endl;
@@ -160,12 +166,6 @@ void mutiTargetmenu()
     std::cout << " Alt+X to delete last position" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Ctrl+Alt to add/remove 5 positions" << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << " Insert to go to single target mode" << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << " Home to change cps" << std::endl;
-    std::cout << "" << std::endl;
-    std::cout << " Delete to minimize/maximize" << std::endl;
     std::cout << "" << std::endl;
     std::cout << " Pause to terminate the program" << std::endl;
 
@@ -260,25 +260,28 @@ void inputHandling()
         {
             if (GetAsyncKeyState(VK_F8) & 1)
             {
-                multiToggle = !multiToggle;
-                if (multiToggle)
+                if (cursorPositions.size() > 0)
                 {
-                    timeBeginPeriod(timeResolution);
-                }
-                else if (!multiToggle)
-                {
-                    timeEndPeriod(timeResolution);
-                }
+                    multiToggle = !multiToggle;
+                    if (multiToggle)
+                    {
+                        timeBeginPeriod(timeResolution);
+                    }
+                    else if (!multiToggle)
+                    {
+                        timeEndPeriod(timeResolution);
+                    }
 
-                toggleDisplay = multiToggle ? "True" : "False";
+                    toggleDisplay = multiToggle ? "True" : "False";
 
 #if PR_DEBUG == 1
-                ChangeCurserPos(11, 6);
+                    ChangeCurserPos(11, 6);
 #elif defined(PR_RELEASE)
-                ChangeCurserPos(11, 2);
+                    ChangeCurserPos(11, 2);
 #endif
-                std::cout << toggleDisplay << " " << std::endl;
-                SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                    std::cout << toggleDisplay << " " << std::endl;
+                    SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
+                }
             }
 
             if (GetAsyncKeyState(VK_R) & 1)
@@ -602,45 +605,48 @@ int main()
 
         if (GetAsyncKeyState(VK_DELETE) & 1)
         {
-            windowShown = !windowShown;
-            if (windowShown)
+            if (GetAsyncKeyState(VK_MENU) & 0x8000)
             {
-                ShowWindow(consoleWindow, SW_SHOWNORMAL);
+                windowShown = !windowShown;
+                if (windowShown)
+                {
+                    ShowWindow(consoleWindow, SW_SHOWNORMAL);
 
 #if PR_DEBUG == 1
-                if (multiTargetMode)
-                {
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 520, SWP_NOMOVE);
-                    setConsoleBufferSize(37, 30);
-                    mutiTargetmenu();
-                }
-                else if (!multiTargetMode)
-                {
-                    setConsoleBufferSize(34, 18);
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 330, SWP_NOMOVE);
-                    setConsoleBufferSize(34, 18);
-                    menu();
-                }
+                    if (multiTargetMode)
+                    {
+                        SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 520, SWP_NOMOVE);
+                        setConsoleBufferSize(37, 30);
+                        mutiTargetmenu();
+                    }
+                    else if (!multiTargetMode)
+                    {
+                        setConsoleBufferSize(34, 18);
+                        SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 330, SWP_NOMOVE);
+                        setConsoleBufferSize(34, 18);
+                        menu();
+                    }
 #elif defined(PR_RELEASE)
-                if (multiTargetMode)
-                {
-                    // SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE); // old one
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
-                    setConsoleBufferSize(37, 26);;
-                    mutiTargetmenu();
-                }
-                else if (!multiTargetMode)
-                {
-                    setConsoleBufferSize(34, 14);
-                    SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
-                    setConsoleBufferSize(34, 14);
-                    menu();
-                }
+                    if (multiTargetMode)
+                    {
+                        // SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 370, 460, SWP_NOMOVE); // old one
+                        SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 315, 455, SWP_NOMOVE);
+                        setConsoleBufferSize(37, 26);;
+                        mutiTargetmenu();
+                    }
+                    else if (!multiTargetMode)
+                    {
+                        setConsoleBufferSize(34, 14);
+                        SetWindowPos(consoleWindow, HWND_TOPMOST, 700, 400, 305, 265, SWP_NOMOVE);
+                        setConsoleBufferSize(34, 14);
+                        menu();
+                    }
 #endif
-            }
-            if (!windowShown)
-            {
-                ShowWindow(consoleWindow, SW_MINIMIZE);
+                }
+                else if (!windowShown)
+                {
+                    ShowWindow(consoleWindow, SW_MINIMIZE);
+                }
             }
         }
 
