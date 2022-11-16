@@ -372,9 +372,6 @@ void inputHandling()
                     SetConsoleCursorPosition(hConsoleOutput, endConsoleCurserPos.dwCursorPosition);
                     }
             }
-            // old input buffer fix
-            //else if(GetAsyncKeyState(VK_X) & 1 || GetAsyncKeyState(VK_R) & 1 || GetAsyncKeyState(VK_Z) & 1 && (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0 && (GetAsyncKeyState(VK_MENU) & 0x8000) == 0)
-            //    FlushConsoleInputBuffer(hConsoleInput);
         }
         
         while (userError || cps > maxCps)
@@ -450,7 +447,7 @@ void inputHandling()
                     {
                         timeBeginPeriod(timeResolution);
                     }
-                    if (!toggle)
+                    else if (!toggle)
                     {
                         timeEndPeriod(timeResolution);
                     }
