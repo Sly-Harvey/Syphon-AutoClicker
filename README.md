@@ -7,5 +7,5 @@
 
 **the reason i made this is because i wanted to specify how many clicks per second i want and not just the delay like some other autoclickers.**
 
-<img src="Images/Syphon_AutoClicker1.png" >
-<img src="Images/Syphon_AutoClicker3.png" >
+<img src="Images/Syphon_AutoClicker1.png" width=600>
+<img src="Images/Syphon_AutoClicker3.png" width=600>
