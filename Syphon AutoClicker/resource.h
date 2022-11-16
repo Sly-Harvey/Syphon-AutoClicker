@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Syphon AutoClicker V2.rc
+// Used by Syphon AutoClicker.rc
 //
 #define IDI_ICON1                       101
 

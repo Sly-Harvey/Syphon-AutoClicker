@@ -188,7 +188,7 @@
     <ResourceCompile Include="Syphon AutoClicker.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\..\Pictures\Icons\AutoClicker_default.ico" />
+    <Image Include="..\Images\Syphon AutoClicker Icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
